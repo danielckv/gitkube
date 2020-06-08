@@ -32,13 +32,13 @@ Gitkube will run on any Kubernetes vendor/distribution AS IS. In case you find a
 ##### Using kubectl
 
 ```sh
-kubectl create -f https://storage.googleapis.com/gitkube/gitkube-setup-stable.yaml
+kubectl create -f https://raw.githubusercontent.com/hasura/gitkube/master/manifests/gitkube-setup.yaml
 
 #expose gitkubed service
 kubectl --namespace kube-system expose deployment gitkubed --type=LoadBalancer --name=gitkubed
 ```
 
-##### Using gitkube CLI 
+##### Using gitkube CLI (DEPRECATED)
 
 1. Install Gitkube CLI:
    - Linux/MacOS
@@ -56,39 +56,15 @@ kubectl --namespace kube-system expose deployment gitkubed --type=LoadBalancer -
    gitkube install
    ```
 
-#### Provider walkthroughs
-
-The above installation steps work on most Kubernetes clusters. Detailed walkthroughs for few specific providers are also available:
-
-| Provider        | Link          |
-|-----------------|---------------|
-| minikube        |[minikube](docs/minikube.md) |
-
-#### Example
-Follow this [example](https://github.com/hasura/gitkube-example) repo for a typical workflow of gitkube.
-
-
-## How it works
-
-Gitkube has three components:
-
-1. Remote: Custom resource defined by a K8s CRD
-2. gitkube-controller: Controller that manages Remote objects and propogates changes to gitkubed 
-3. gitkubed: Git host that builds docker image from the repo and rolls out deployment
-
-### High-level architecture
-
-![Architecture](https://raw.githubusercontent.com/hasura/gitkube/master/artifacts/gitkube-v0.1.png)
-
-### Workflow
+## Workflow
 - Local dev: User creates a base git repo for the application with Dockerfile and K8s deployment
 - Setting Remote: User defines a spec for Remote containing the rules for `git push` 
 - Deploying application: Once a Remote is setup, application can be deployed to K8s using `git push <remote> master`
 
-#### Local dev
+### Local dev
 User should have a git repo with source code and a Dockerfile. User should also create a base K8s deployment for the application.
 
-#### Setting Remote
+### Setting Remote
 A Remote resource consists of 3 parts:
 
 1. authorizedKeys: List of ssh-keys for authorizing `git push`.
@@ -123,7 +99,7 @@ spec:
       dockerfile: example/www/Dockerfile  # Location of Dockerfile for the source code
 ```
 
-#### Deploying application
+### Deploying application
 
 Once a Remote is created, it gets a git remote URL which you can find in its `status` spec
 
@@ -147,12 +123,21 @@ And finally, `git push`
 $ git push sampleremote master
 ```
 
-## Roadmap
+### More examples
+Follow this [example](https://github.com/hasura/gitkube-example) repo for more workflows with gitkube.
 
-Gitkube is open to evolution. Some of the features to be added in future include:  
+## How it works
 
-- Allowing all apps (daemonset, statefulset) to be deployed using `git push`. Current support is limited to deployments. [#19](https://github.com/hasura/gitkube/issues/19)
-- Allowing different git hooks to be integrated [#20](https://github.com/hasura/gitkube/issues/20)
+Gitkube has three components:
+
+1. Remote: Custom resource defined by a K8s CRD
+2. gitkube-controller: Controller that manages Remote objects and propogates changes to gitkubed 
+3. gitkubed: Git host that builds docker image from the repo and rolls out deployment
+
+### High-level architecture
+
+![Architecture](https://raw.githubusercontent.com/hasura/gitkube/master/artifacts/gitkube-v0.1.png)
+
 
 ## Contributing
 
@@ -165,8 +150,6 @@ Contributions are welcome.
 - Join the [Gitkube channel](https://kubernetes.slack.com/messages/CA68R8ZBN/) in the Kubernetes Slack group
 
 - <a href="https://twitter.com/intent/follow?screen_name=gitkube"><img src="https://img.shields.io/twitter/follow/gitkube.svg?style=social&logo=twitter" alt="follow on Twitter"></a>
-
-- Subscribe to the [Gitkube mailing list](http://eepurl.com/dsxoH9)
 
 ## Maintainers
 
